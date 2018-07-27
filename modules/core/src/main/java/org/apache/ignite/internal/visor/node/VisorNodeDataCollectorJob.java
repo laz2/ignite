@@ -32,6 +32,7 @@ import org.apache.ignite.internal.processors.cache.GridCachePartitionExchangeMan
 import org.apache.ignite.internal.processors.cache.GridCacheProcessor;
 import org.apache.ignite.internal.processors.igfs.IgfsProcessorAdapter;
 import org.apache.ignite.internal.util.ipc.IpcServerEndpoint;
+import org.apache.ignite.internal.util.typedef.F;
 import org.apache.ignite.internal.util.typedef.internal.S;
 import org.apache.ignite.internal.util.typedef.internal.U;
 import org.apache.ignite.internal.visor.VisorJob;
@@ -187,6 +188,10 @@ public class VisorNodeDataCollectorJob extends VisorJob<VisorNodeDataCollectorTa
             double total = 0;
             double ready = 0;
 
+            String cacheGrp = arg.getCacheGroup();
+
+            boolean collectByGroup = cacheGrp != null;
+
             for (String cacheName : cacheProc.cacheNames()) {
                 if (proxyCache(cacheName))
                     continue;
@@ -213,7 +218,8 @@ public class VisorNodeDataCollectorJob extends VisorJob<VisorNodeDataCollectorTa
                         total += partTotal;
                         ready += partReady;
 
-                        resCaches.add(new VisorCache(ignite, ca, arg.isCollectCacheMetrics()));
+                        if (!collectByGroup || F.eq(cacheGrp, ca.configuration().getGroupName()))
+                            resCaches.add(new VisorCache(ignite, ca, arg.isCollectCacheMetrics()));
                     }
                     catch(IllegalStateException | IllegalArgumentException e) {
                         if (debug && ignite.log() != null)
