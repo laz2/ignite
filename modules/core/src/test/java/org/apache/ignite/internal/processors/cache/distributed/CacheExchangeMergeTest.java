@@ -495,9 +495,8 @@ public class CacheExchangeMergeTest extends GridCommonAbstractTest {
                 tx.commit();
             }
         }
-        catch (ClusterTopologyException ignore) {
-            // No-op.
-            ignore.printStackTrace(System.out);
+        catch (ClusterTopologyException e) {
+            info("Tx failed, ignore: " + e);
 
             return;
         }
