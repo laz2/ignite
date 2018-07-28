@@ -568,7 +568,7 @@ public class GridNearAtomicSingleUpdateFuture extends GridNearAtomicAbstractUpda
 
         boolean needPrimaryRes = !mappingKnown || primary.isLocal() || nodes.size() == 1 || nearEnabled;
 
-        TestDebugLog1.addEntryMessage(cctx.cacheId(), key, U.nodeIds(nodes), "map");
+        TestDebugLog1.addEntryMessage(cctx.cacheId(), key, U.nodeIds(nodes), "map " + topVer + " " + mappingKnown);
 
         GridNearAtomicAbstractUpdateRequest req;
 
