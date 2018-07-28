@@ -186,7 +186,7 @@ public abstract class GridDhtAtomicAbstractUpdateFuture extends GridCacheFutureA
         if (dhtNodes == null)
             dhtNodes = affNodes;
 
-        TestDebugLog1.addCacheEntryMessage(entry, dhtNodes, "dht map " + topVer + " " + updateReq.affinityMapping());
+        TestDebugLog1.addCacheEntryMessage(entry, U.nodeIds(dhtNodes), "dht map " + topVer + " " + updateReq.affinityMapping());
 
         if (log.isDebugEnabled())
             log.debug("Mapping entry to DHT nodes [nodes=" + U.nodeIds(dhtNodes) + ", entry=" + entry + ']');

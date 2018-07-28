@@ -1944,8 +1944,9 @@ public class GridDhtPartitionTopologyImpl implements GridDhtPartitionTopology {
 
         diffFromAffinityVer = affAssignment.topologyVersion();
 
-        for (Map.Entry<Integer, Set<UUID>> e : diffFromAffinity.entrySet()) {
-            TestDebugLog1.addPartMessage(grp.groupId(), e.getKey(), e.getValue(), "diff " + diffFromAffinityVer);
+        for (int i= 0; i < partitions(); i++) {
+            Set<UUID> diff = diffFromAffinity.get(i);
+            TestDebugLog1.addPartMessage(grp.groupId(), i, diff, "diff " + diffFromAffinityVer);
         }
     }
 
