@@ -660,7 +660,7 @@ public class CacheExchangeMergeTest extends GridCommonAbstractTest {
                             ", order=" + node.cluster().localNode().order() +
                             ", cache=" + cacheName + ']';
 
-                    for (int i = 0; i < 5; i++) {
+                    for (int i = 0; i < 10; i++) {
                         Integer key = rnd.nextInt(20_000);
 
                         cache.put(key, i);
@@ -679,39 +679,39 @@ public class CacheExchangeMergeTest extends GridCommonAbstractTest {
                         }
                     }
 
-                    for (int i = 0; i < 5; i++) {
-                        Map<Integer, Integer> map = new TreeMap<>();
-
-                        for (int j = 0; j < 10; j++) {
-                            Integer key = rnd.nextInt(20_000);
-
-                            map.put(key, i);
-                        }
-
-                        cache.putAll(map);
-
-                        Map<Object, Object> res = cache.getAll(map.keySet());
-
-                        for (Map.Entry<Integer, Integer> e : map.entrySet()) {
-                            try {
-                                assertEquals(err, e.getValue(), res.get(e.getKey()));
-                            } catch (AssertionFailedError err0) {
-                                synchronized (TestDebugLog1.class) {
-                                    err0.printStackTrace(System.out);
-                                    TestDebugLog1.addMessage("1 " + err0.getMessage());
-                                    TestDebugLog1.printKeyAndPartMessages("test_debug.txt", e.getKey(), node.affinity(cacheName).partition(e.getKey()), CU.cacheId(cacheName));
-                                    System.exit(1);
-                                }
-                            }
-                        }
-                    }
-
-                    if (cache.getConfiguration(CacheConfiguration.class).getAtomicityMode() == TRANSACTIONAL) {
-                        for (TransactionConcurrency concurrency : TransactionConcurrency.values()) {
-                            for (TransactionIsolation isolation : TransactionIsolation.values())
-                                checkNodeCaches(err, node, cache, concurrency, isolation);
-                        }
-                    }
+//                    for (int i = 0; i < 5; i++) {
+//                        Map<Integer, Integer> map = new TreeMap<>();
+//
+//                        for (int j = 0; j < 10; j++) {
+//                            Integer key = rnd.nextInt(20_000);
+//
+//                            map.put(key, i);
+//                        }
+//
+//                        cache.putAll(map);
+//
+//                        Map<Object, Object> res = cache.getAll(map.keySet());
+//
+//                        for (Map.Entry<Integer, Integer> e : map.entrySet()) {
+//                            try {
+//                                assertEquals(err, e.getValue(), res.get(e.getKey()));
+//                            } catch (AssertionFailedError err0) {
+//                                synchronized (TestDebugLog1.class) {
+//                                    err0.printStackTrace(System.out);
+//                                    TestDebugLog1.addMessage("1 " + err0.getMessage());
+//                                    TestDebugLog1.printKeyAndPartMessages("test_debug.txt", e.getKey(), node.affinity(cacheName).partition(e.getKey()), CU.cacheId(cacheName));
+//                                    System.exit(1);
+//                                }
+//                            }
+//                        }
+//                    }
+//
+//                    if (cache.getConfiguration(CacheConfiguration.class).getAtomicityMode() == TRANSACTIONAL) {
+//                        for (TransactionConcurrency concurrency : TransactionConcurrency.values()) {
+//                            for (TransactionIsolation isolation : TransactionIsolation.values())
+//                                checkNodeCaches(err, node, cache, concurrency, isolation);
+//                        }
+//                    }
                 }
             }));
         }
