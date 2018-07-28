@@ -278,6 +278,8 @@ public class CacheExchangeMergeTest extends GridCommonAbstractTest {
         }
         finally {
             System.clearProperty(IgniteSystemProperties.IGNITE_EXCHANGE_MERGE_DELAY);
+
+            TestDebugLog1.clear();
         }
     }
 
@@ -301,6 +303,8 @@ public class CacheExchangeMergeTest extends GridCommonAbstractTest {
      */
     private void concurrentStart(final boolean withClients) throws Exception {
         for (int i = 0; i < 5; i++) {
+            TestDebugLog1.clear();
+
             log.info("Iteration: " + i);
 
             startGrid(0);
