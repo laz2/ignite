@@ -1720,6 +1720,8 @@ public abstract class GridCacheMapEntry extends GridMetadataAwareAdapter impleme
         lockEntry();
 
         try {
+            TestDebugLog1.addCacheEntryMessage(this, val, "innerUpdate");
+
             checkObsolete();
 
             boolean internal = isInternal() || !context().userCache();
@@ -2709,6 +2711,8 @@ public abstract class GridCacheMapEntry extends GridMetadataAwareAdapter impleme
         lockEntry();
 
         try {
+            TestDebugLog1.addCacheEntryMessage(this, val, "initialVal");
+
             checkObsolete();
 
             boolean walEnabled = !cctx.isNear() && cctx.group().persistenceEnabled() && cctx.group().walEnabled();
@@ -2773,8 +2777,6 @@ public abstract class GridCacheMapEntry extends GridMetadataAwareAdapter impleme
                 update = storeValue(val, expTime, ver, p);
 
             if (update) {
-                TestDebugLog1.addCacheEntryMessage(this, val, "initialVal");
-
                 update(val, expTime, ttl, ver, true);
 
                 boolean skipQryNtf = false;
