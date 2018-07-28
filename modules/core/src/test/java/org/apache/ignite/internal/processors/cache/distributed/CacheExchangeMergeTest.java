@@ -31,18 +31,14 @@ import java.util.concurrent.Future;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
-import junit.framework.AssertionFailedError;
 import org.apache.ignite.Ignite;
 import org.apache.ignite.IgniteCache;
 import org.apache.ignite.IgniteSystemProperties;
-import org.apache.ignite.TestDebugLog1;
 import org.apache.ignite.cache.CacheAtomicityMode;
 import org.apache.ignite.cache.CacheMode;
 import org.apache.ignite.cluster.ClusterNode;
 import org.apache.ignite.cluster.ClusterTopologyException;
 import org.apache.ignite.configuration.CacheConfiguration;
-import org.apache.ignite.configuration.DataRegionConfiguration;
-import org.apache.ignite.configuration.DataStorageConfiguration;
 import org.apache.ignite.configuration.IgniteConfiguration;
 import org.apache.ignite.events.DiscoveryEvent;
 import org.apache.ignite.events.Event;
@@ -66,7 +62,6 @@ import org.apache.ignite.internal.util.future.GridCompoundFuture;
 import org.apache.ignite.internal.util.typedef.F;
 import org.apache.ignite.internal.util.typedef.G;
 import org.apache.ignite.internal.util.typedef.PA;
-import org.apache.ignite.internal.util.typedef.internal.CU;
 import org.apache.ignite.lang.IgniteBiPredicate;
 import org.apache.ignite.lang.IgniteClosure;
 import org.apache.ignite.lang.IgnitePredicate;
@@ -124,10 +119,6 @@ public class CacheExchangeMergeTest extends GridCommonAbstractTest {
     /** {@inheritDoc} */
     @Override protected IgniteConfiguration getConfiguration(String igniteInstanceName) throws Exception {
         IgniteConfiguration cfg = super.getConfiguration(igniteInstanceName);
-
-        DataStorageConfiguration cfg1 = new DataStorageConfiguration();
-        cfg1.setDefaultDataRegionConfiguration(new DataRegionConfiguration().setMaxSize(128 * 1024 * 1024));
-        cfg.setDataStorageConfiguration(cfg1);
 
         ((TcpDiscoverySpi)cfg.getDiscoverySpi()).setIpFinder(ipFinder);
 
@@ -278,8 +269,6 @@ public class CacheExchangeMergeTest extends GridCommonAbstractTest {
         }
         finally {
             System.clearProperty(IgniteSystemProperties.IGNITE_EXCHANGE_MERGE_DELAY);
-
-            TestDebugLog1.clear();
         }
     }
 
@@ -303,8 +292,6 @@ public class CacheExchangeMergeTest extends GridCommonAbstractTest {
      */
     private void concurrentStart(final boolean withClients) throws Exception {
         for (int i = 0; i < 5; i++) {
-            TestDebugLog1.clear();
-
             log.info("Iteration: " + i);
 
             startGrid(0);
@@ -667,51 +654,32 @@ public class CacheExchangeMergeTest extends GridCommonAbstractTest {
 
                         Object val = cache.get(key);
 
-                        try {
-                            assertEquals(err, i, val);
-                        } catch (AssertionFailedError err0) {
-                            synchronized (TestDebugLog1.class) {
-                                err0.printStackTrace(System.out);
-                                TestDebugLog1.addMessage("0 " + err0.getMessage());
-                                TestDebugLog1.printKeyAndPartMessages("test_debug.txt", key, node.affinity(cacheName).partition(key), CU.cacheId(cacheName));
-                                System.exit(1);
-                            }
-                        }
+                        assertEquals(err, i, val);
                     }
 
-//                    for (int i = 0; i < 5; i++) {
-//                        Map<Integer, Integer> map = new TreeMap<>();
-//
-//                        for (int j = 0; j < 10; j++) {
-//                            Integer key = rnd.nextInt(20_000);
-//
-//                            map.put(key, i);
-//                        }
-//
-//                        cache.putAll(map);
-//
-//                        Map<Object, Object> res = cache.getAll(map.keySet());
-//
-//                        for (Map.Entry<Integer, Integer> e : map.entrySet()) {
-//                            try {
-//                                assertEquals(err, e.getValue(), res.get(e.getKey()));
-//                            } catch (AssertionFailedError err0) {
-//                                synchronized (TestDebugLog1.class) {
-//                                    err0.printStackTrace(System.out);
-//                                    TestDebugLog1.addMessage("1 " + err0.getMessage());
-//                                    TestDebugLog1.printKeyAndPartMessages("test_debug.txt", e.getKey(), node.affinity(cacheName).partition(e.getKey()), CU.cacheId(cacheName));
-//                                    System.exit(1);
-//                                }
-//                            }
-//                        }
-//                    }
-//
-//                    if (cache.getConfiguration(CacheConfiguration.class).getAtomicityMode() == TRANSACTIONAL) {
-//                        for (TransactionConcurrency concurrency : TransactionConcurrency.values()) {
-//                            for (TransactionIsolation isolation : TransactionIsolation.values())
-//                                checkNodeCaches(err, node, cache, concurrency, isolation);
-//                        }
-//                    }
+                    for (int i = 0; i < 5; i++) {
+                        Map<Integer, Integer> map = new TreeMap<>();
+
+                        for (int j = 0; j < 10; j++) {
+                            Integer key = rnd.nextInt(20_000);
+
+                            map.put(key, i);
+                        }
+
+                        cache.putAll(map);
+
+                        Map<Object, Object> res = cache.getAll(map.keySet());
+
+                        for (Map.Entry<Integer, Integer> e : map.entrySet())
+                            assertEquals(err, e.getValue(), res.get(e.getKey()));
+                    }
+
+                    if (cache.getConfiguration(CacheConfiguration.class).getAtomicityMode() == TRANSACTIONAL) {
+                        for (TransactionConcurrency concurrency : TransactionConcurrency.values()) {
+                            for (TransactionIsolation isolation : TransactionIsolation.values())
+                                checkNodeCaches(err, node, cache, concurrency, isolation);
+                        }
+                    }
                 }
             }));
         }
@@ -760,18 +728,8 @@ public class CacheExchangeMergeTest extends GridCommonAbstractTest {
             return;
         }
 
-        for (Map.Entry<Object, Object> e : map.entrySet()) {
-            try {
-                assertEquals(err + " " + concurrency + " " + isolation, e.getValue(), cache.get(e.getKey()));
-            } catch (AssertionFailedError err0) {
-                synchronized (TestDebugLog1.class) {
-                    err0.printStackTrace(System.out);
-                    TestDebugLog1.addMessage("2 " + node.cluster().localNode().id() + " " + err0.getMessage());
-                    TestDebugLog1.printKeyAndPartMessages("test_debug.txt", e.getKey(), node.affinity(cache.getName()).partition(e.getKey()), CU.cacheId(cache.getName()));
-                    System.exit(1);
-                }
-            }
-        }
+        for (Map.Entry<Object, Object> e : map.entrySet())
+            assertEquals(err, e.getValue(), cache.get(e.getKey()));
     }
 
     /**

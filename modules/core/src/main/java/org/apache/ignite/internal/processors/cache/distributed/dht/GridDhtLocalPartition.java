@@ -31,7 +31,6 @@ import org.apache.ignite.IgniteCheckedException;
 import org.apache.ignite.IgniteException;
 import org.apache.ignite.IgniteLogger;
 import org.apache.ignite.IgniteSystemProperties;
-import org.apache.ignite.TestDebugLog1;
 import org.apache.ignite.cluster.ClusterNode;
 import org.apache.ignite.internal.IgniteFutureTimeoutCheckedException;
 import org.apache.ignite.internal.IgniteInternalFuture;
@@ -542,15 +541,8 @@ public class GridDhtLocalPartition extends GridCacheConcurrentMapImpl implements
                 return update;
             }
         }
-        else {
-            if (this.state.compareAndSet(state, setPartState(state, toState))) {
-                TestDebugLog1.addPartMessage(grp.groupId(), id, toState, "set state");
-                return  true;
-            }
-            else {
-                return false;
-            }
-        }
+        else
+            return this.state.compareAndSet(state, setPartState(state, toState));
     }
 
     /**

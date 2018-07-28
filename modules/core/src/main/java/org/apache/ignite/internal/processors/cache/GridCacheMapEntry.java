@@ -33,7 +33,6 @@ import org.apache.ignite.IgniteCache;
 import org.apache.ignite.IgniteCheckedException;
 import org.apache.ignite.IgniteException;
 import org.apache.ignite.IgniteLogger;
-import org.apache.ignite.TestDebugLog1;
 import org.apache.ignite.cache.eviction.EvictableEntry;
 import org.apache.ignite.internal.NodeStoppingException;
 import org.apache.ignite.internal.pagemem.wal.StorageException;
@@ -1040,8 +1039,6 @@ public abstract class GridCacheMapEntry extends GridMetadataAwareAdapter impleme
             if (tx != null && cctx.group().persistenceEnabled() && cctx.group().walEnabled())
                 logPtr = logTxUpdate(tx, val, expireTime, updateCntr0);
 
-            TestDebugLog1.addCacheEntryMessage(this, val, "innerSet");
-
             update(val, expireTime, ttl, newVer, true);
 
             drReplicate(drType, val, newVer, topVer);
@@ -1720,8 +1717,6 @@ public abstract class GridCacheMapEntry extends GridMetadataAwareAdapter impleme
         lockEntry();
 
         try {
-            TestDebugLog1.addCacheEntryMessage(this, val, "innerUpdate");
-
             checkObsolete();
 
             boolean internal = isInternal() || !context().userCache();
@@ -2711,8 +2706,6 @@ public abstract class GridCacheMapEntry extends GridMetadataAwareAdapter impleme
         lockEntry();
 
         try {
-            TestDebugLog1.addCacheEntryMessage(this, val, "initialVal");
-
             checkObsolete();
 
             boolean walEnabled = !cctx.isNear() && cctx.group().persistenceEnabled() && cctx.group().walEnabled();

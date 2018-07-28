@@ -23,7 +23,6 @@ import java.util.UUID;
 import java.util.concurrent.atomic.AtomicReference;
 import org.apache.ignite.IgniteCheckedException;
 import org.apache.ignite.IgniteLogger;
-import org.apache.ignite.TestDebugLog1;
 import org.apache.ignite.cluster.ClusterNode;
 import org.apache.ignite.internal.IgniteDiagnosticAware;
 import org.apache.ignite.internal.IgniteDiagnosticPrepareContext;
@@ -309,8 +308,6 @@ public class GridPartitionedSingleGetFuture extends GridCacheFutureAdapter<Objec
                 recovery);
 
             try {
-                TestDebugLog1.addEntryMessage(cctx.cacheId(), key, node.id(), "snd req");
-
                 cctx.io().send(node, req, cctx.ioPolicy());
             }
             catch (IgniteCheckedException e) {
@@ -330,8 +327,6 @@ public class GridPartitionedSingleGetFuture extends GridCacheFutureAdapter<Objec
         int part = cctx.affinity().partition(key);
 
         List<ClusterNode> affNodes = cctx.affinity().nodesByPartition(part, topVer);
-
-        TestDebugLog1.addEntryMessage(cctx.cacheId(), key, U.nodeIds(affNodes), "get map " + topVer);
 
         if (affNodes.isEmpty()) {
             onDone(serverNotFoundError(topVer));
@@ -369,8 +364,6 @@ public class GridPartitionedSingleGetFuture extends GridCacheFutureAdapter<Objec
      * @return {@code True} if future completed.
      */
     private boolean localGet(AffinityTopologyVersion topVer, int part) {
-        TestDebugLog1.addEntryMessage(cctx.cacheId(), key, topVer, "local get");
-
         assert cctx.affinityNode() : this;
 
         GridDhtCacheAdapter colocated = cctx.dht();
@@ -508,8 +501,6 @@ public class GridPartitionedSingleGetFuture extends GridCacheFutureAdapter<Objec
      * @param res Result.
      */
     public void onResult(UUID nodeId, GridNearSingleGetResponse res) {
-        TestDebugLog1.addEntryMessage(cctx.cacheId(), key, nodeId, "get res " + topVer);
-
         if (!processResponse(nodeId) ||
             !checkError(res.error(), res.invalidPartitions(), res.topologyVersion(), nodeId))
             return;
@@ -551,8 +542,6 @@ public class GridPartitionedSingleGetFuture extends GridCacheFutureAdapter<Objec
      * @param res Result.
      */
     @Override public void onResult(UUID nodeId, GridNearGetResponse res) {
-        TestDebugLog1.addEntryMessage(cctx.cacheId(), key, nodeId, "get res2 " + topVer);
-
         if (!processResponse(nodeId) ||
             !checkError(res.error(), !F.isEmpty(res.invalidPartitions()), res.topologyVersion(), nodeId))
             return;
@@ -729,8 +718,6 @@ public class GridPartitionedSingleGetFuture extends GridCacheFutureAdapter<Objec
 
     /** {@inheritDoc} */
     @Override public boolean onNodeLeft(UUID nodeId) {
-        TestDebugLog1.addEntryMessage(cctx.cacheId(), key, nodeId, "node left");
-
         if (!processResponse(nodeId))
             return false;
 
@@ -760,8 +747,6 @@ public class GridPartitionedSingleGetFuture extends GridCacheFutureAdapter<Objec
      * @param topVer Topology version.
      */
     private void remap(final AffinityTopologyVersion topVer) {
-        TestDebugLog1.addEntryMessage(cctx.cacheId(), key, topVer, "remap");
-
         cctx.closures().runLocalSafe(new Runnable() {
             @Override public void run() {
                 map(topVer);

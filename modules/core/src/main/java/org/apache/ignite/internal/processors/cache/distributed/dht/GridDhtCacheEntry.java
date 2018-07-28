@@ -24,7 +24,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
 import org.apache.ignite.IgniteCheckedException;
-import org.apache.ignite.TestDebugLog1;
 import org.apache.ignite.cluster.ClusterNode;
 import org.apache.ignite.internal.IgniteInternalFuture;
 import org.apache.ignite.internal.processors.affinity.AffinityTopologyVersion;
@@ -648,10 +647,6 @@ public class GridDhtCacheEntry extends GridDistributedCacheEntry {
                     ", entry=" + System.identityHashCode(this) +
                     ']');
             }
-
-
-            TestDebugLog1.addCacheEntryMessage(this, val, "clear");
-
 
             removeValue();
 

@@ -34,7 +34,6 @@ import java.util.stream.Collectors;
 import org.apache.ignite.IgniteCheckedException;
 import org.apache.ignite.IgniteException;
 import org.apache.ignite.IgniteLogger;
-import org.apache.ignite.TestDebugLog1;
 import org.apache.ignite.cache.PartitionLossPolicy;
 import org.apache.ignite.cluster.ClusterNode;
 import org.apache.ignite.events.DiscoveryEvent;
@@ -1943,11 +1942,6 @@ public class GridDhtPartitionTopologyImpl implements GridDhtPartitionTopology {
         }
 
         diffFromAffinityVer = affAssignment.topologyVersion();
-
-        for (int i= 0; i < partitions(); i++) {
-            Set<UUID> diff = diffFromAffinity.get(i);
-            TestDebugLog1.addPartMessage(grp.groupId(), i, diff, "diff " + diffFromAffinityVer);
-        }
     }
 
     /** {@inheritDoc} */
@@ -2796,8 +2790,6 @@ public class GridDhtPartitionTopologyImpl implements GridDhtPartitionTopology {
                 if (affNodes.size() != owners.size() || !owners.containsAll(affNodes))
                     return;
             }
-
-            TestDebugLog1.addCacheMessage(grp.groupId(), readyTopVer, "rebalanced");
 
             rebalancedTopVer = readyTopVer;
 
