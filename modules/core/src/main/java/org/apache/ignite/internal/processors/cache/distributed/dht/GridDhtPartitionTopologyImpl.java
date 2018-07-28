@@ -434,7 +434,7 @@ public class GridDhtPartitionTopologyImpl implements GridDhtPartitionTopology {
             }
         }
 
-        updateRebalanceVersion(affAssignment);
+        updateRebalanceVersion(affVer, affAssignment);
 
         return needRefresh;
     }
@@ -763,7 +763,7 @@ public class GridDhtPartitionTopologyImpl implements GridDhtPartitionTopology {
                 if (node2part != null && node2part.valid())
                     changed |= checkEvictions(updateSeq, aff);
 
-                updateRebalanceVersion(aff.assignment());
+                updateRebalanceVersion(aff.topologyVersion(), aff.assignment());
 
                 consistencyCheck();
 
@@ -1536,7 +1536,7 @@ public class GridDhtPartitionTopologyImpl implements GridDhtPartitionTopology {
                     if (exchangeVer == null)
                         changed |= checkEvictions(updateSeq, aff);
 
-                    updateRebalanceVersion(aff.assignment());
+                    updateRebalanceVersion(aff.topologyVersion(), aff.assignment());
                 }
 
                 if (partSizes != null)
@@ -1804,7 +1804,7 @@ public class GridDhtPartitionTopologyImpl implements GridDhtPartitionTopology {
                     if (exchId == null)
                         changed |= checkEvictions(updateSeq, aff);
 
-                    updateRebalanceVersion(aff.assignment());
+                    updateRebalanceVersion(aff.topologyVersion(), aff.assignment());
                 }
 
                 consistencyCheck();
@@ -1854,7 +1854,7 @@ public class GridDhtPartitionTopologyImpl implements GridDhtPartitionTopology {
             }
 
             if (updateRebalanceVer)
-                updateRebalanceVersion(assignment.assignment());
+                updateRebalanceVersion(assignment.topologyVersion(), assignment.assignment());
         }
         finally {
             lock.writeLock().unlock();
@@ -2756,7 +2756,10 @@ public class GridDhtPartitionTopologyImpl implements GridDhtPartitionTopology {
     /**
      * @param aff Affinity assignments.
      */
-    private void updateRebalanceVersion(List<List<ClusterNode>> aff) {
+    private void updateRebalanceVersion(AffinityTopologyVersion affVer, List<List<ClusterNode>> aff) {
+        if (!affVer.equals(diffFromAffinityVer))
+            return;
+
         if (!rebalancedTopVer.equals(readyTopVer)) {
             if (node2part == null || !node2part.valid())
                 return;
