@@ -159,6 +159,44 @@ public class TestDebugLog1 {
         }
     }
 
+    static class CacheMessage extends Message {
+        private final int cacheId;
+        private Object val;
+
+        public CacheMessage(int cacheId, Object val, String msg) {
+            super(msg);
+
+            this.cacheId = cacheId;
+            this.val = val;
+            this.msg = msg;
+        }
+
+        @Override public boolean equals(Object o) {
+            if (this == o) return true;
+            if (o == null || getClass() != o.getClass()) return false;
+
+            PartMessage partKey = (PartMessage) o;
+
+            if (cacheId != partKey.cacheId) return false;
+            return true;
+
+        }
+
+        @Override public int hashCode() {
+            int result = cacheId;
+            return result;
+        }
+
+        public String toString() {
+            return "CacheMessage [" +
+                    "val=" + val +
+                    ", msg=" + msg +
+                    ", thread=" + thread +
+                    ", time=" + DEBUG_DATE_FMT.format(new Date(ts)) +
+                    ", cacheId=" + cacheId + ']';
+        }
+    }
+
     static final boolean out = false;
 
     public static void addPageMessage(long pageId, String msg) {
@@ -183,6 +221,10 @@ public class TestDebugLog1 {
 
         if (out)
             System.out.println(msg);
+    }
+
+    public static void addCacheMessage(int cacheId, Object val, String msg) {
+        msgs.add(new CacheMessage(cacheId, val, msg));
     }
 
     public static void addCacheEntryMessage(GridCacheMapEntry e, CacheObject val, String msg) {
@@ -472,13 +514,18 @@ public class TestDebugLog1 {
                     if (em.cacheId != cacheId || !em.key.equals(key))
                         continue;
                 }
-
-                if (msg instanceof PartMessage) {
+                else if (msg instanceof PartMessage) {
                     PartMessage pm = (PartMessage)msg;
 
                     if (pm.cacheId != cacheId || pm.partId != partId)
                         continue;
+                } else if (msg instanceof CacheMessage) {
+                    CacheMessage em = (CacheMessage)msg;
+
+                    if (em.cacheId != cacheId)
+                        continue;
                 }
+
 
                 System.out.println(msg);
             }
