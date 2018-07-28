@@ -670,10 +670,12 @@ public class CacheExchangeMergeTest extends GridCommonAbstractTest {
                         try {
                             assertEquals(err, i, val);
                         } catch (AssertionFailedError err0) {
-                            err0.printStackTrace(System.out);
-                            TestDebugLog1.addMessage("0 " + err0.getMessage());
-                            TestDebugLog1.printKeyAndPartMessages("test_debug.txt", key, node.affinity(cacheName).partition(key), CU.cacheId(cacheName));
-                            System.exit(1);
+                            synchronized (TestDebugLog1.class) {
+                                err0.printStackTrace(System.out);
+                                TestDebugLog1.addMessage("0 " + err0.getMessage());
+                                TestDebugLog1.printKeyAndPartMessages("test_debug.txt", key, node.affinity(cacheName).partition(key), CU.cacheId(cacheName));
+                                System.exit(1);
+                            }
                         }
                     }
 
@@ -694,10 +696,12 @@ public class CacheExchangeMergeTest extends GridCommonAbstractTest {
                             try {
                                 assertEquals(err, e.getValue(), res.get(e.getKey()));
                             } catch (AssertionFailedError err0) {
-                                err0.printStackTrace(System.out);
-                                TestDebugLog1.addMessage("1 " + err0.getMessage());
-                                TestDebugLog1.printKeyAndPartMessages("test_debug.txt", e.getKey(), node.affinity(cacheName).partition(e.getKey()), CU.cacheId(cacheName));
-                                System.exit(1);
+                                synchronized (TestDebugLog1.class) {
+                                    err0.printStackTrace(System.out);
+                                    TestDebugLog1.addMessage("1 " + err0.getMessage());
+                                    TestDebugLog1.printKeyAndPartMessages("test_debug.txt", e.getKey(), node.affinity(cacheName).partition(e.getKey()), CU.cacheId(cacheName));
+                                    System.exit(1);
+                                }
                             }
                         }
                     }
@@ -760,10 +764,12 @@ public class CacheExchangeMergeTest extends GridCommonAbstractTest {
             try {
                 assertEquals(err + " " + concurrency + " " + isolation, e.getValue(), cache.get(e.getKey()));
             } catch (AssertionFailedError err0) {
-                err0.printStackTrace(System.out);
-                TestDebugLog1.addMessage("2 " + node.cluster().localNode().id() + " " + err0.getMessage());
-                TestDebugLog1.printKeyAndPartMessages("test_debug.txt", e.getKey(), node.affinity(cache.getName()).partition(e.getKey()), CU.cacheId(cache.getName()));
-                System.exit(1);
+                synchronized (TestDebugLog1.class) {
+                    err0.printStackTrace(System.out);
+                    TestDebugLog1.addMessage("2 " + node.cluster().localNode().id() + " " + err0.getMessage());
+                    TestDebugLog1.printKeyAndPartMessages("test_debug.txt", e.getKey(), node.affinity(cache.getName()).partition(e.getKey()), CU.cacheId(cache.getName()));
+                    System.exit(1);
+                }
             }
         }
     }

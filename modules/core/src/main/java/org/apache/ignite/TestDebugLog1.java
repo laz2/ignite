@@ -466,8 +466,12 @@ public class TestDebugLog1 {
         }
         else {
             for (Object msg : msgs0) {
-                if (msg instanceof EntryMessage && !((EntryMessage)msg).key.equals(key))
-                    continue;
+                if (msg instanceof EntryMessage) {
+                    EntryMessage em = (EntryMessage)msg;
+
+                    if (em.cacheId != cacheId || !em.key.equals(key))
+                        continue;
+                }
 
                 if (msg instanceof PartMessage) {
                     PartMessage pm = (PartMessage)msg;
