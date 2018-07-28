@@ -110,7 +110,7 @@ public class CacheExchangeMergeTest extends GridCommonAbstractTest {
     private boolean testDelaySpi;
 
     /** */
-    private static String[] cacheNames = {"c1", "c2", "c3", "c4", "c5", "c6", "c7", "c8", "c9", "c10"};
+    private static String[] cacheNames = {"c1", "c2", "c3", "c4", "c5"/*, "c6", "c7", "c8", "c9", "c10"*/};
 
     /** */
     private boolean cfgCache = true;
@@ -153,12 +153,12 @@ public class CacheExchangeMergeTest extends GridCommonAbstractTest {
                 cacheConfiguration("c2", ATOMIC, PARTITIONED, 1),
                 cacheConfiguration("c3", ATOMIC, PARTITIONED, 2),
                 cacheConfiguration("c4", ATOMIC, PARTITIONED, 10),
-                cacheConfiguration("c5", ATOMIC, REPLICATED, 0),
-                cacheConfiguration("c6", TRANSACTIONAL, PARTITIONED, 0),
-                cacheConfiguration("c7", TRANSACTIONAL, PARTITIONED, 1),
-                cacheConfiguration("c8", TRANSACTIONAL, PARTITIONED, 2),
-                cacheConfiguration("c9", TRANSACTIONAL, PARTITIONED, 10),
-                cacheConfiguration("c10", TRANSACTIONAL, REPLICATED, 0)
+                cacheConfiguration("c5", ATOMIC, REPLICATED, 0)
+//                cacheConfiguration("c6", TRANSACTIONAL, PARTITIONED, 0),
+//                cacheConfiguration("c7", TRANSACTIONAL, PARTITIONED, 1),
+//                cacheConfiguration("c8", TRANSACTIONAL, PARTITIONED, 2),
+//                cacheConfiguration("c9", TRANSACTIONAL, PARTITIONED, 10),
+//                cacheConfiguration("c10", TRANSACTIONAL, REPLICATED, 0)
             );
         }
 
