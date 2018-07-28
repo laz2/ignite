@@ -195,8 +195,6 @@ public class TestDebugLog1 {
     }
 
     public static void addEntryMessage(int cacheId, Object key, Object val, String msg) {
-        if (cacheId != testCache)
-            return;
         //        if (!(val instanceof TcpDiscoveryHeartbeatMessage || val instanceof TcpDiscoveryCustomEventMessage || val instanceof TcpDiscoveryCustomEventMessage))
 //            return;
 
@@ -254,15 +252,10 @@ public class TestDebugLog1 {
         }
     }
 
-    private static final int testCache = CU.cacheId("c8");
-
     public static void addPartMessage(int cacheId,
                                       int partId,
                                       Object val,
                                       String msg) {
-        if (cacheId != testCache)
-            return;
-
         msgs.add(new PartMessage(cacheId, partId, val, msg));
     }
 
