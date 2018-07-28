@@ -431,6 +431,8 @@ public class TestDebugLog1 {
     }
 
     public static void printKeyAndPartMessages(String fileName, Object key, int partId, int cacheId) {
+        fileName = null;
+
         assert key != null;
 
         List<Object> msgs0;
